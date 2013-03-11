@@ -9,5 +9,6 @@
   
   <modules>
     <module>1.4-stable</module>
+    <module>2.3-stable</module>
   </modules>
 </project>

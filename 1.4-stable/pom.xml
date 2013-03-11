@@ -1,0 +1,146 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jp.kkkon.redmine-war</groupId>
+  <artifactId>1.4-stable</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Redmine WAR 1.4-stable</name>
+
+  <scm>
+    <connection>scm:svn:http://svn.redmine.org/redmine/branches/1.4-stable/</connection>
+    <url>http://www.redmine.org/</url>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-plugin</artifactId>
+        <version>1.8.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+            <artifactId>maven-scm-provider-svnjava</artifactId>
+            <version>2.0.5</version>
+          </dependency>
+        </dependencies>
+
+<!--        
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+                <goal>checkout</goal>
+            </goals>
+          </execution>
+        </executions>
+-->
+      </plugin>
+
+      <plugin>
+        <groupId>org.jruby.plugins</groupId>
+        <artifactId>jruby-rake-plugin</artifactId>
+        <version>1.7.3</version>
+        <executions>
+          <execution>
+            <id>install-bundler</id>
+            <phase>generate-resources</phase>
+            <goals>
+                <goal>install-gems</goal>
+            </goals>
+            <configuration>
+              <gems>${gem.options} bundler</gems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bundle-install</id>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <args>-S bundle install ${bundle.options}</args>
+              <launchDirectory>${basedir}/target/checkout</launchDirectory>
+            </configuration>
+          </execution>
+          <!--
+          <execution>
+            <id>install-gems-jruby</id>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>install-gems</goal>
+            </goals>
+            <configuration>
+              <gems>${gem.options} ${required.gems}</gems>
+            </configuration>
+          </execution>
+          -->
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <goals>
+                <goal>rake</goal>
+            </goals>
+
+            <configuration>
+              <args>war</args>
+              <launchDirectory>${basedir}/target/checkout</launchDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>1.7.3</version>
+          </dependency>
+        </dependencies>
+
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks></tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
+
+    </plugins>
+
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/ruby</directory>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/rubygems/gems</directory>
+        <targetPath>rubygems</targetPath>
+        <includes>
+            <include>*lib/**/*</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <required.gems>jdbc-sqlite3 activerecord-jdbcsqlite3-adapter</required.gems>
+    <gem.path>${basedir}/src/main/rubygems</gem.path>
+    <gem.options>--no-rdoc --no-ri --install-dir=${gem.path}</gem.options>
+    <bundle.options>--without postgresql mysql development test --install-dir=${gem.path} --path=${gem.path}</bundle.options>
+  </properties>
+</project>

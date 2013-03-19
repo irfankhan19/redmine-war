@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>jp.kkkon.redmine-war</groupId>
-  <artifactId>1.4-stable</artifactId>
+  <artifactId>2.1-stable</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Redmine WAR 1.4-stable</name>
+  <name>Redmine WAR 2.1-stable</name>
 
   <scm>
-    <connection>scm:svn:http://svn.redmine.org/redmine/branches/1.4-stable/</connection>
+    <connection>scm:svn:http://svn.redmine.org/redmine/branches/2.1-stable/</connection>
     <url>http://www.redmine.org/</url>
   </scm>
 

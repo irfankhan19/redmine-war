@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="redmine-war" default="all">
+
+<property environment="env"/>
+<property name="jruby.ver" value="1.6.8"/>
+<property name="jruby.home" value="target/JRuby/jruby-${jruby.ver}"/>
+<property name="gem.opts">--no-rdoc --no-ri</property>
+
+
+<property name="jruby.executable.win" location="${jruby.home}/bin/jruby.bat"/>
+<property name="jruby.executable.unix" location="${jruby.home}/bin/jruby.sh"/>
+<condition property="jruby.executable" value="${jruby.executable.win}" else="${jruby.executable.unix}">
+  <os family="windows"/>
+</condition>
+
+<pathconvert property="jruby.env.location">
+  <path location="${basedir}/${jruby.home}/bin"/>
+</pathconvert>
+<condition property="jruby.env" value="${env.Path};${jruby.env.location}" else="${env.PATH}:${jruby.env.location}">
+  <os family="windows"/>
+</condition>
+
+
+
+<target name="jruby-get">
+  <get
+    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-bin-${jruby.ver}.zip"
+    dest="target"
+    usetimestamp="true"
+    />
+</target>
+
+<target name="jruby-extract" unless="skip.extract">
+  <delete
+    dir="target/JRuby"
+    />
+  <unzip
+    src="target/jruby-bin-${jruby.ver}.zip"
+    dest="target/JRuby"
+    />
+</target>
+
+
+
+<target name="jruby-test">
+  <exec executable="${jruby.executable}">
+    <arg value="--help"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+
+  <exec executable="${jruby.executable}">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="list"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+
+  <exec executable="${jruby.executable}">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="environment"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+
+
+
+
+
+<target name="install-bundler">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="bundler"/>
+    <arg value="-v=1.3.2"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="install-jruby-openssl">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-openssl"/>
+    <arg value="-v=0.7"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="install-jruby-jars">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-jars"/>
+    <arg value="-v=${jruby.ver}"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="install-jruby-rack">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="jruby-rack"/>
+    <arg value="-v=1.1.13.1"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="install-rubyzip">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="rubyzip"/>
+    <arg value="-v=0.9.9"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="install-warbler" depends="install-jruby-jars,install-jruby-rack,install-rubyzip">
+  <exec executable="${jruby.executable}" failonerror="true">
+    <arg value="-S"/>
+    <arg value="gem"/>
+    <arg value="install"/>
+    <arg line="${gem.opts}"/>
+    <arg value="warbler"/>
+    <arg value="-v=1.3.6"/>
+    <arg value="--ignore-dependencies"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+
+
+
+<target name="Gemfile-patch">
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="../../script/jruby1.8.rb"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="Gemfile-local">
+  <copy  file="${basedir}/src/main/patch/Gemfile1.8.local" tofile="${basedir}/target/checkout/Gemfile.local"/>
+</target>
+
+<target name="config-database">
+  <copy  file="${basedir}/src/main/ruby/config/database.yml" todir="${basedir}/target/checkout/config/"/>
+</target>
+
+<target name="bundler-install">
+  <delete file="${basedir}/target/checkout/Gemfile.lock"/>
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="bundle"/>
+    <arg value="install"/>
+    <arg line="--without postgresql mysql development test"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="warble-config">
+  <delete file="${basedir}/target/checkout/config/warble.rb"/>
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="warble"/>
+    <arg value="config"/>
+    <arg line="--trace"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+  <copy file="${basedir}/src/main/ruby/config/warble.rb" tofile="${basedir}/target/checkout/config/warble.rb" overwrite="true"/>
+</target>
+
+<target name="rake-generate-session-store">
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="rake"/>
+    <arg value="generate_session_store"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="rake-db-migrate">
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="rake"/>
+    <arg value="db:migrate"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="RAILS_ENV" value="${rails.env}"/>
+  </exec>
+</target>
+
+<target name="warble-war">
+  <exec executable="${jruby.executable}" dir="${basedir}/target/checkout" failonerror="true">
+    <arg value="-S"/>
+    <arg value="warble"/>
+    <arg value="war"/>
+    <arg value="--trace"/>
+    <env key="PATH" path="${jruby.env}"/>
+    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+  </exec>
+</target>
+
+<target name="all">
+  <antcall target="jruby-get"/>
+  <antcall target="jruby-extract"/>
+  <antcall target="jruby-test"/>
+
+  <antcall target="install-bundler"/>
+  <antcall target="install-jruby-openssl"/>
+  <antcall target="install-warbler"/>
+  <antcall target="jruby-test"/>
+
+  <antcall target="Gemfile-patch"/>
+  <antcall target="Gemfile-local"/>
+  <antcall target="config-database"/>
+
+  <antcall target="bundler-install"/>
+  <antcall target="warble-config"/>
+
+  <antcall target="jruby-test"/>
+
+
+  <antcall target="rake-generate-session-store"/>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="development"/>
+  </antcall>
+  <antcall target="rake-db-migrate">
+    <param name="rails.env" value="production"/>
+  </antcall>
+  <antcall target="warble-war"/>
+</target>
+
+</project>

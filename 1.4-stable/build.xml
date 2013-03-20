@@ -23,11 +23,28 @@
 
 
 <target name="jruby-get">
+  <mkdir dir="extdist"/>
   <get
-    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-bin-${jruby.ver}.zip"
-    dest="target"
+    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-bin-${jruby.ver}.zip.md5"
+    dest="extdist"
     usetimestamp="true"
     />
+  <get
+    src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-bin-${jruby.ver}.zip"
+    dest="extdist"
+    usetimestamp="true"
+    />
+  <checksum
+    file="extdist/jruby-bin-${jruby.ver}.zip"
+    verifyProperty="jruby-get-verify"
+    />
+  <fail message="Download err. Please delete extdist/jruby-bin-${jruby.ver}.zip">
+    <condition>
+      <not>
+        <istrue value="${jruby-get-verify}"/>
+      </not>
+    </condition>
+  </fail>
 </target>
 
 <target name="jruby-extract" unless="skip.extract">
@@ -35,7 +52,7 @@
     dir="target/JRuby"
     />
   <unzip
-    src="target/jruby-bin-${jruby.ver}.zip"
+    src="extdist/jruby-bin-${jruby.ver}.zip"
     dest="target/JRuby"
     />
 </target>
@@ -46,7 +63,7 @@
   <exec executable="${jruby.executable}">
     <arg value="--help"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 
   <exec executable="${jruby.executable}">
@@ -54,7 +71,7 @@
     <arg value="gem"/>
     <arg value="list"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 
   <exec executable="${jruby.executable}">
@@ -62,7 +79,7 @@
     <arg value="gem"/>
     <arg value="environment"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -80,7 +97,7 @@
     <arg value="bundler"/>
     <arg value="-v=1.3.2"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -93,7 +110,7 @@
     <arg value="jruby-openssl"/>
     <arg value="-v=0.7"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -106,7 +123,7 @@
     <arg value="jruby-jars"/>
     <arg value="-v=${jruby.ver}"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -119,7 +136,7 @@
     <arg value="jruby-rack"/>
     <arg value="-v=1.1.13.1"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -132,7 +149,7 @@
     <arg value="rubyzip"/>
     <arg value="-v=0.9.9"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -146,7 +163,7 @@
     <arg value="-v=1.3.6"/>
     <arg value="--ignore-dependencies"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -158,7 +175,7 @@
     <arg value="-S"/>
     <arg value="../../script/jruby1.8.rb"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -178,7 +195,7 @@
     <arg value="install"/>
     <arg line="--without postgresql mysql development test"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -190,7 +207,7 @@
     <arg value="config"/>
     <arg line="--trace"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
   <copy file="${basedir}/src/main/ruby/config/warble.rb" tofile="${basedir}/target/checkout/config/warble.rb" overwrite="true"/>
 </target>
@@ -201,7 +218,7 @@
     <arg value="rake"/>
     <arg value="generate_session_store"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 
@@ -211,7 +228,7 @@
     <arg value="rake"/>
     <arg value="db:migrate"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
     <env key="RAILS_ENV" value="${rails.env}"/>
   </exec>
 </target>
@@ -223,7 +240,7 @@
     <arg value="war"/>
     <arg value="--trace"/>
     <env key="PATH" path="${jruby.env}"/>
-    <env key="JRUBY_HOME" path="${basedir}/jruby-${jruby.home}"/>
+    <env key="JRUBY_HOME" path="${jruby.home}"/>
   </exec>
 </target>
 

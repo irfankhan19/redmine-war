@@ -6,15 +6,7 @@
 <property name="jruby.home" value="target/JRuby/jruby-${jruby.ver}"/>
 <property name="gem.opts">--no-rdoc --no-ri</property>
 
-<!--
-<property name="jruby.executable.win" location="${jruby.home}/bin/jruby.bat"/>
-<property name="jruby.executable.unix" location="${jruby.home}/bin/jruby.sh"/>
-<condition property="jruby.executable" value="${jruby.executable.win}" else="${jruby.executable.unix}">
-  <os family="windows"/>
-</condition>
--->
 <property name="jruby.classname" value="org.jruby.Main"/>
-<property name="jruby.executable" location="extdist/jruby-complete-${jruby.ver}.jar"/>
 
 <pathconvert property="jruby.env.location">
   <path location="${basedir}/${jruby.home}/bin"/>
@@ -23,14 +15,7 @@
   <os family="windows"/>
 </condition>
 
-<path id="jruby.classpath.id">
-  <fileset dir="extdist">
-    <include name="jruby-complete-${jruby.ver}.jar"/>
-  </fileset>
-</path>
-<property name="jruby.classpath.id" refid="jruby.classpath.id"/>
-
-<condition property="jruby.classpath" value="${maven.plugin.classpath}" else="${jruby.classpath.id}">
+<condition property="jruby.classpath" value="${maven.plugin.classpath}" else="extdist/jruby-complete-${jruby.ver}.jar">
   <isset property="maven.plugin.classpath"/>
 </condition>
 
@@ -53,7 +38,7 @@
     file="extdist/jruby-complete-${jruby.ver}.jar"
     verifyProperty="jruby-get-verify"
     />
-  <fail message="Download err. Please delete extdist/jruby-complete-${jruby.ver}.zip">
+  <fail message="Download err. Please delete extdist/jruby-complete-${jruby.ver}.jar">
     <condition>
       <not>
         <istrue value="${jruby-get-verify}"/>
@@ -66,12 +51,6 @@
   <delete
     dir="target/JRuby"
     />
-<!--
-  <unzip
-    src="extdist/jruby-bin-${jruby.ver}.zip"
-    dest="target/JRuby"
-    />
--->
 </target>
 
 

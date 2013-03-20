@@ -13,6 +13,7 @@
   <os family="windows"/>
 </condition>
 -->
+<property name="jruby.classname" value="org.jruby.Main"/>
 <property name="jruby.executable" location="extdist/jruby-complete-${jruby.ver}.jar"/>
 
 <pathconvert property="jruby.env.location">
@@ -22,9 +23,21 @@
   <os family="windows"/>
 </condition>
 
+<path id="jruby.classpath.id">
+  <fileset dir="extdist">
+    <include name="jruby-complete-${jruby.ver}.jar"/>
+  </fileset>
+</path>
+<property name="jruby.classpath.id" refid="jruby.classpath.id"/>
+
+<condition property="jruby.classpath" value="${maven.plugin.classpath}" else="${jruby.classpath.id}">
+  <isset property="maven.plugin.classpath"/>
+</condition>
 
 
-<target name="jruby-get">
+
+
+<target name="jruby-get" unless="maven.plugin.classpath">
   <mkdir dir="extdist"/>
   <get
     src="http://jruby.org.s3.amazonaws.com/downloads/${jruby.ver}/jruby-complete-${jruby.ver}.jar.md5"
@@ -63,7 +76,9 @@
 
 
 <target name="jruby-test">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
   >
     <arg value="--help"/>
@@ -71,7 +86,9 @@
     <env key="JRUBY_HOME" path="${jruby.home}"/>
   </java>
 
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
   >
     <arg value="-S"/>
@@ -81,7 +98,9 @@
     <env key="JRUBY_HOME" path="${jruby.home}"/>
   </java>
 
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
   >
     <arg value="-S"/>
@@ -91,7 +110,9 @@
     <env key="JRUBY_HOME" path="${jruby.home}"/>
   </java>
 
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
   >
     <arg value="-S"/>
@@ -102,7 +123,9 @@
     <env key="GEM_HOME" path="${jruby.home}"/>
   </java>
 
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
   >
     <arg value="-S"/>
@@ -120,7 +143,9 @@
 
 
 <target name="install-bundler">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -137,7 +162,9 @@
 </target>
 
 <target name="install-jruby-openssl">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -154,7 +181,9 @@
 </target>
 
 <target name="install-jruby-jars">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -171,7 +200,9 @@
 </target>
 
 <target name="install-jruby-rack">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -188,7 +219,9 @@
 </target>
 
 <target name="install-rubyzip">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -205,7 +238,9 @@
 </target>
 
 <target name="install-rake">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -222,7 +257,9 @@
 </target>
 
 <target name="install-warbler" depends="install-jruby-jars,install-jruby-rack,install-rubyzip,install-rake">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     failonerror="true"
   >
@@ -243,7 +280,9 @@
 
 
 <target name="Gemfile-patch">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"
@@ -266,7 +305,9 @@
 
 <target name="bundler-install">
   <delete file="${basedir}/target/checkout/Gemfile.lock"/>
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"
@@ -287,7 +328,9 @@
 
 <target name="warble-config">
   <delete file="${basedir}/target/checkout/config/warble.rb"/>
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"
@@ -304,7 +347,9 @@
 </target>
 
 <target name="rake-generate-session-store">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"
@@ -319,7 +364,9 @@
 </target>
 
 <target name="rake-db-migrate">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"
@@ -335,7 +382,9 @@
 </target>
 
 <target name="warble-war">
-  <java jar="${jruby.executable}"
+  <java
+    classname="${jruby.classname}"
+    classpath="${jruby.classpath}"
     fork="true"
     dir="${basedir}/target/checkout"
     failonerror="true"

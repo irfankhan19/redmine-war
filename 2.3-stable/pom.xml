@@ -59,7 +59,7 @@
           <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-complete</artifactId>
-            <version>1.6.8</version>
+            <version>${jruby.version}</version>
           </dependency>
         </dependencies>
 
@@ -151,5 +151,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jruby.version>1.6.8</jruby.version>
   </properties>
 </project>

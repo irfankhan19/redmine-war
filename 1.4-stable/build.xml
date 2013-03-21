@@ -2,7 +2,9 @@
 <project name="redmine-war" default="all">
 
 <property environment="env"/>
-<property name="jruby.ver" value="1.6.8"/>
+<condition property="jruby.ver" value="${jruby.version}" else="1.6.8">
+  <isset property="maven.plugin.classpath"/>
+</condition>
 <property name="jruby.home" value="target/JRuby/jruby-${jruby.ver}"/>
 <property name="gem.opts">--no-rdoc --no-ri</property>
 

@@ -292,9 +292,6 @@
     failonerror="true"
   >
     <jvmarg value="-Xmx384m"/>
-    <jvmarg value=""/>
-    <jvmarg value=""/>
-    <jvmarg value=""/>
     <arg value="-S"/>
     <arg value="bundle"/>
     <arg value="install"/>

@@ -36,6 +36,7 @@
                 <goal>checkout</goal>
             </goals>
             <configuration>
+              <checkoutDirectory>${workingDirectory}</checkoutDirectory>
               <skipCheckoutIfExists>true</skipCheckoutIfExists>
             </configuration>
           </execution>
@@ -45,6 +46,9 @@
             <goals>
                 <goal>update</goal>
             </goals>
+            <configuration>
+              <workingDirectory>${workingDirectory}</workingDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -152,5 +156,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jruby.version>1.6.8</jruby.version>
+    <workingDirectory>${basedir}/target/checkout</workingDirectory>
   </properties>
 </project>

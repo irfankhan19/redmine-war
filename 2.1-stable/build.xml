@@ -24,6 +24,17 @@
 
 
 
+<target name="check-redmine-checkout">
+  <available file="${workingDirectory}/.svn" type="dir" property="checkout-redmine"/>
+  <fail message="Redmine doesn't checkout. please run 'mvn clean'">
+    <condition>
+      <not>
+        <istrue value="${checkout-redmine}"/>
+      </not>
+    </condition>
+  </fail>
+</target>
+
 <target name="jruby-get" unless="maven.plugin.classpath">
   <mkdir dir="extdist"/>
   <get
@@ -378,6 +389,8 @@
 </target>
 
 <target name="all">
+  <antcall target="check-redmine-checkout"/>
+
   <antcall target="jruby-get"/>
   <antcall target="jruby-extract"/>
   <antcall target="jruby-test"/>

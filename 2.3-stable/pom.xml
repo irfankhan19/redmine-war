@@ -8,6 +8,21 @@
   <packaging>pom</packaging>
   <name>Redmine WAR 2.3-stable</name>
 
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>kkkon</id>
+      <name>Kiyofumi Kondoh</name>
+    </developer>
+  </developers>
+
   <scm>
     <connection>scm:svn:http://svn.redmine.org/redmine/branches/2.3-stable/</connection>
     <url>http://www.redmine.org/</url>

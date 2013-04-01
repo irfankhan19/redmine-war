@@ -6,7 +6,22 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>redmine-war</name>
-  
+
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>kkkon</id>
+      <name>Kiyofumi Kondoh</name>
+    </developer>
+  </developers>
+
   <modules>
     <module>1.4-stable</module>
     <module>2.0-stable</module>
